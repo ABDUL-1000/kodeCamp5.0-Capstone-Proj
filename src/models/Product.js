@@ -7,10 +7,12 @@ const productSchema = new mongoose.Schema({
   cost: { type: Number, required: true, min: 0 },
   productImages: { type: [String], default: [] },
   description: { type: String, default: '' },
-  stockStatus: { type: String, type: String, 
+  stockStatus: { 
+    type: String, 
     enum: ['in-stock', 'out-of-stock', 'pre-order'], 
-  default: 'in-stock' },
-  brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: false }
+    default: 'in-stock' 
+  },
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: true }
 }, { timestamps: true });
 
 productSchema.plugin(mongoosePaginate);
