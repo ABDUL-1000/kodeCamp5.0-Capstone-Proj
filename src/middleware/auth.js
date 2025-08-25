@@ -21,3 +21,10 @@ export function requireAdmin(req, res, next) {
   }
   next();
 }
+
+export const requireCustomer = (req, res, next) => {
+  if (req.user.role !== 'customer') {
+    return res.status(403).json({ error: 'Customer access required' });
+  }
+  next();
+};

@@ -112,7 +112,7 @@ router.put(
       const { id } = req.params;
       const updates = req.body;
 
-      // If updating brand, check if it exists
+     
       if (updates.brand) {
         const brandExists = await Brand.findById(updates.brand);
         if (!brandExists) {
@@ -124,7 +124,7 @@ router.put(
         id,
         updates,
         { new: true }
-      ).populate("brand", "brandName"); // Populate with brandName
+      ).populate("brand", "brandName"); 
 
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
