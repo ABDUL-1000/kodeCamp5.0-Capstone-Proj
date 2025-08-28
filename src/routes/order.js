@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, validationResult, param } from 'express-validator';
-import Order from '../models/order.js';
+import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import { requireAuth, requireAdmin, requireCustomer } from '../middleware/auth.js';
 
