@@ -1,21 +1,33 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-// Create email transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
+const resend = new Resend('re_MtBAu2oT_7Wq3HD5VKGJXM2viPGGUkob4');
+
+// List of authorized test emails (add teammates here)
+const AUTHORIZED_EMAILS = [
+  'abdullatifgiwa2019@gmail.com',
+  'rider1@example.com',
+  'rider2@example.com',
+  'rider3@example.com',
+  'customer1@example.com',
+  'customer2@example.com',
+  'customer3@example.com',
+];
+
+// Check if email can receive emails
+const canSendToEmail = (email) => {
+  // For now, only allow your own email until domain is verified
+  return email === 'abdullatifgiwa2019@gmail.com';
 };
 
 // Send welcome email
 export const sendWelcomeEmail = async (email, name, role) => {
   try {
-    const transporter = createTransporter();
-    
+    if (!canSendToEmail(email)) {
+      console.log(`📧 Mock: Welcome email would be sent to ${email}`);
+      console.log(`💡 To send to ${email}, verify a domain in Resend or add them as a teammate`);
+      return true; // Return true to continue registration flow
+    }
+
     const subject = `Welcome to SwiftRider ${role.charAt(0).toUpperCase() + role.slice(1)}!`;
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -35,24 +47,35 @@ export const sendWelcomeEmail = async (email, name, role) => {
       </div>
     `;
     
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+    const { data, error } = await resend.emails.send({
+      from: 'SwiftRider <onboarding@resend.dev>',
       to: email,
-      subject,
-      html
+      subject: subject,
+      html: html,
     });
-    
-    console.log(`Welcome email sent to ${email}`);
+
+    if (error) {
+      console.error('Error sending welcome email:', error);
+      return false;
+    }
+
+    console.log(`✅ Welcome email sent to ${email}`, data);
+    return true;
   } catch (error) {
     console.error('Error sending welcome email:', error);
+    return false;
   }
 };
 
 // Send delivery notification
 export const sendDeliveryNotification = async (email, type, data) => {
   try {
-    const transporter = createTransporter();
-    
+    if (!canSendToEmail(email)) {
+      console.log(`📧 Mock: Delivery notification (${type}) would be sent to ${email}`);
+      console.log(`💡 To send to ${email}, verify a domain in Resend or add them as a teammate`);
+      return true;
+    }
+
     let subject, html;
     
     switch (type) {
@@ -118,27 +141,38 @@ export const sendDeliveryNotification = async (email, type, data) => {
         break;
         
       default:
-        return;
+        return false;
     }
     
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+    const { data: result, error } = await resend.emails.send({
+      from: 'SwiftRider <onboarding@resend.dev>',
       to: email,
-      subject,
-      html
+      subject: subject,
+      html: html,
     });
-    
-    console.log(`Delivery notification (${type}) sent to ${email}`);
+
+    if (error) {
+      console.error('Error sending delivery notification:', error);
+      return false;
+    }
+
+    console.log(`✅ Delivery notification (${type}) sent to ${email}`, result);
+    return true;
   } catch (error) {
     console.error('Error sending delivery notification:', error);
+    return false;
   }
 };
 
 // Send payment notification
 export const sendPaymentNotification = async (email, type, data) => {
   try {
-    const transporter = createTransporter();
-    
+    if (!canSendToEmail(email)) {
+      console.log(`📧 Mock: Payment notification (${type}) would be sent to ${email}`);
+      console.log(`💡 To send to ${email}, verify a domain in Resend or add them as a teammate`);
+      return true;
+    }
+
     let subject, html;
     
     switch (type) {
@@ -172,18 +206,56 @@ export const sendPaymentNotification = async (email, type, data) => {
         break;
         
       default:
-        return;
+        return false;
     }
     
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+    const { data: result, error } = await resend.emails.send({
+      from: 'SwiftRider <onboarding@resend.dev>',
       to: email,
-      subject,
-      html
+      subject: subject,
+      html: html,
     });
-    
-    console.log(`Payment notification (${type}) sent to ${email}`);
+
+    if (error) {
+      console.error('Error sending payment notification:', error);
+      return false;
+    }
+
+    console.log(`✅ Payment notification (${type}) sent to ${email}`, result);
+    return true;
   } catch (error) {
     console.error('Error sending payment notification:', error);
+    return false;
+  }
+};
+
+// Test email to specific address
+export const testEmailTo = async (testEmail) => {
+  try {
+    if (!canSendToEmail(testEmail)) {
+      return { 
+        success: false, 
+        message: `Cannot send to ${testEmail}. Verify domain or add as teammate.`,
+        instructions: 'Go to resend.com/domains to verify a domain'
+      };
+    }
+
+    const { data, error } = await resend.emails.send({
+      from: 'SwiftRider <onboarding@resend.dev>',
+      to: testEmail,
+      subject: 'SwiftRider Test Email',
+      html: '<p>This is a test email from your SwiftRider API! If you receive this, your email service is working correctly.</p>',
+    });
+
+    if (error) {
+      console.error('Test email failed:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ Test email sent successfully:', data);
+    return { success: true, data };
+  } catch (error) {
+    console.error('Test email error:', error);
+    return { success: false, error };
   }
 };
