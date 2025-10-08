@@ -105,7 +105,7 @@ export const sendWelcomeEmail = async (email, name, role) => {
 
     const msg = {
       to: email,
-      from: 'abdullatifgiwa2019@gmail.com', // Use your verified email
+      from: 'abdullatifgiwa2019@gmail.com', 
       subject: subject,
       html: html,
     };
@@ -295,7 +295,7 @@ export const sendDeliveryNotification = async (email, type, data) => {
 
     const msg = {
       to: email,
-      from: 'abdullatifgiwa2019@gmail.com', // Use your verified email
+      from: 'abdullatifgiwa2019@gmail.com', 
       subject: subject,
       html: html,
     };
@@ -406,7 +406,7 @@ export const sendPaymentNotification = async (email, type, data) => {
 
     const msg = {
       to: email,
-      from: 'abdullatifgiwa2019@gmail.com', // Use your verified email
+      from: 'abdullatifgiwa2019@gmail.com', 
       subject: subject,
       html: html,
     };
@@ -421,41 +421,3 @@ export const sendPaymentNotification = async (email, type, data) => {
   }
 };
 
-// Test SendGrid connection
-export const testSendGrid = async (testEmail) => {
-  try {
-    const msg = {
-      to: testEmail,
-      from: 'abdullatifgiwa2019@gmail.com', // Use your verified email
-      subject: 'SwiftRider Test Email',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
-                .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-                .success { color: #10B981; font-size: 48px; margin: 20px 0; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="success">✅</div>
-                <h2>SwiftRider Email Test Successful!</h2>
-                <p>This is a test email from SwiftRider API to verify SendGrid is working correctly!</p>
-                <p>If you receive this, your email service is properly configured. 🎉</p>
-            </div>
-        </body>
-        </html>
-      `,
-    };
-
-    await sgMail.send(msg);
-    
-    console.log(`✅ Test email sent to ${testEmail}`);
-    return true;
-  } catch (error) {
-    console.error('Error sending test email:', error.message);
-    return false;
-  }
-};
